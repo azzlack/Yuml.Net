@@ -63,6 +63,10 @@
     <Compile Include="Yuml\Scale.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>XCOPY "$(TargetDir)$(TargetName).*" "$(SolutionDir)NuGetPackager\lib\net40\" /s /y
+XCOPY "$(TargetDir)$(TargetName).*" "$(SolutionDir)NuGetPackager\lib\net45\" /s /y</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

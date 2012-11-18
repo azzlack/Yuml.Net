@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>Yuml.Net</id>
+    <version>1.0.0</version>
+    <authors>Ove Andersen</authors>
+    <owners>EyeCatch</owners>
+    <projectUrl>http://www.eyecatch.no/projects/autoloadservicehostfactory/</projectUrl>
+    <iconUrl>http://www.eyecatch.no/favicon.ico</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>
+      Library for generating UML diagrams from code using the yUML.me service.
+    </description>
+    <releaseNotes>
+    </releaseNotes>
+    <copyright>Copyright EyeCatch 2012</copyright>
+    <tags>uml</tags>
+  </metadata>
+  <files>
+    <file src="lib\**" target="lib" />
+    <file src="tools\**" target="tools" />
+    <file src="content\**" target="content" />
+  </files>
+</package>

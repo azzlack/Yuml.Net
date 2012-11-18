@@ -107,3 +107,8 @@ UpgradeLog*.XML
 # NuGet
 packages/
 
+# Custom
+NugetPackager/BuildPublishPackage.cmd
+NugetPackager/lib/*
+NugetPackager/*.nupkg
+NugetPackager/*.bak
