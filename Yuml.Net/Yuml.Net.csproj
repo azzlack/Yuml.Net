@@ -51,9 +51,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AssemblyFilter.cs" />
+    <Compile Include="DetailLevel.cs" />
+    <Compile Include="Interfaces\IYumlFactory.cs" />
+    <Compile Include="Yuml\DiagramType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="YumlGenerator.cs" />
+    <Compile Include="Relationship.cs" />
+    <Compile Include="RelationshipType.cs" />
+    <Compile Include="YumlFactory.cs" />
+    <Compile Include="Yuml\Direction.cs" />
+    <Compile Include="Yuml\Scale.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
