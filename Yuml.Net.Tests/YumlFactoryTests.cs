@@ -105,7 +105,23 @@
                                 typeof(Domain)
                             };
 
-            Assert.AreEqual("http://yuml.me/diagram/plain;dir:LR;scale:100;/class/[Administrator|+ Domain : Yuml.Net.Test.Models.Domain;+ Roles : Collections.Generic.IList［Yuml.Net.Test.Models.Role］;|+ ChangePassword();],[Administrator]->[Domain|+ Domain : Yuml.Net.Test.Models.Domain;+ Roles : Collections.Generic.IList［Yuml.Net.Test.Models.Role］;|+ ChangePassword();],[Administrator]1-0..*[Role|+ Domain : Yuml.Net.Test.Models.Domain;+ Roles : Collections.Generic.IList［Yuml.Net.Test.Models.Role］;|+ ChangePassword();],[Role|+ Name : String;|],[Domain|+ Name : String;+ Uri : String;|]", new YumlFactory(types).GenerateClassDiagram(DetailLevel.PublicProperties, DetailLevel.PublicMethods));
+            Assert.AreEqual("http://yuml.me/diagram/plain;dir:LR;scale:100;/class/[Administrator|+ Domain : Domain;+ Roles : IList<Role>|+ ChangePassword()],[Administrator]->[Domain|+ Name : string;+ Uri : string],[Administrator]1-0..*[Role|+ Name : string],[Role|+ Name : string],[Domain|+ Name : string;+ Uri : string]", new YumlFactory(types).GenerateClassDiagram(DetailLevel.PublicProperties, DetailLevel.PublicMethods));
+        }
+
+        [Test]
+        public void Can_Generate_Really_Detailed_Class_With_A_Many_Association()
+        {
+            var types = new List<Type>
+                            {
+                                typeof(Administrator), 
+                                typeof(IAdministrator),
+                                typeof(User), 
+                                typeof(Person), 
+                                typeof(Role), 
+                                typeof(Domain)
+                            };
+
+            Assert.AreEqual("http://yuml.me/diagram/plain;dir:LR;scale:100;/class/[Administrator|+ Domain : Domain;+ Roles : IList<Role>|+ ChangePassword()],[Administrator]->[Domain|+ Name : string;+ Uri : string],[Administrator]1-0..*[Role|+ Name : string],[Role|+ Name : string],[Domain|+ Name : string;+ Uri : string]", new YumlFactory(types).GenerateClassDiagram(DetailLevel.PublicProperties, DetailLevel.PublicMethods));
         }
     }
 }

@@ -7,6 +7,7 @@
     using System.Reflection;
     using System.Text;
 
+    using global::Yuml.Net.Extensions;
     using global::Yuml.Net.Interfaces;
     using global::Yuml.Net.Yuml;
 
@@ -138,13 +139,23 @@
                     if (detailLevels.Contains(DetailLevel.PrivateProperties | DetailLevel.PublicProperties))
                     {
                         // Get class details (properties)
-                        sb.AppendFormat("|{0}", this.GetClassPropertiesAsYuml(type, detailLevels));
+                        var properties = this.GetClassPropertiesAsYuml(type, detailLevels);
+                        
+                        if (!string.IsNullOrEmpty(properties)) 
+                        {
+                            sb.AppendFormat("|{0}", properties);
+                        }
                     }
 
                     if (detailLevels.Contains(DetailLevel.PrivateMethods | DetailLevel.PublicMethods))
                     {
                         // Get class details (methods)
-                        sb.AppendFormat("|{0}", this.GetClassMethodsAsYuml(type, detailLevels));
+                        var methods = this.GetClassMethodsAsYuml(type, detailLevels);
+                        
+                        if (!string.IsNullOrEmpty(methods)) 
+                        {
+                            sb.AppendFormat("|{0}", methods);
+                        }
                     }
 
                     sb.Append("]");
@@ -211,13 +222,23 @@
                         if (detailLevels.Contains(DetailLevel.PrivateProperties | DetailLevel.PublicProperties))
                         {
                             // Get class details (properties)
-                            sb.AppendFormat("|{0}", this.GetClassPropertiesAsYuml(type, detailLevels));
+                            var properties = this.GetClassPropertiesAsYuml(type, detailLevels);
+
+                            if (!string.IsNullOrEmpty(properties))
+                            {
+                                sb.AppendFormat("|{0}", properties);
+                            }
                         }
 
                         if (detailLevels.Contains(DetailLevel.PrivateMethods | DetailLevel.PublicMethods))
                         {
                             // Get class details (methods)
-                            sb.AppendFormat("|{0}", this.GetClassMethodsAsYuml(type, detailLevels));
+                            var methods = this.GetClassMethodsAsYuml(type, detailLevels);
+
+                            if (!string.IsNullOrEmpty(methods))
+                            {
+                                sb.AppendFormat("|{0}", methods);
+                            }
                         }
 
                         sb.Append("]");
@@ -257,13 +278,23 @@
                     if (detailLevels.Contains(DetailLevel.PrivateProperties | DetailLevel.PublicProperties))
                     {
                         // Get class details (properties)
-                        sb.AppendFormat("|{0}", this.GetClassPropertiesAsYuml(type, detailLevels));
+                        var properties = this.GetClassPropertiesAsYuml(property.PropertyType, detailLevels);
+
+                        if (!string.IsNullOrEmpty(properties))
+                        {
+                            sb.AppendFormat("|{0}", properties);
+                        }
                     }
 
                     if (detailLevels.Contains(DetailLevel.PrivateMethods | DetailLevel.PublicMethods))
                     {
                         // Get class details (methods)
-                        sb.AppendFormat("|{0}", this.GetClassMethodsAsYuml(type, detailLevels));
+                        var methods = this.GetClassMethodsAsYuml(property.PropertyType, detailLevels);
+
+                        if (!string.IsNullOrEmpty(methods))
+                        {
+                            sb.AppendFormat("|{0}", methods);
+                        }
                     }
 
                     sb.Append("]");
@@ -280,13 +311,23 @@
                         if (detailLevels.Contains(DetailLevel.PrivateProperties | DetailLevel.PublicProperties))
                         {
                             // Get class details (properties)
-                            sb.AppendFormat("|{0}", this.GetClassPropertiesAsYuml(type, detailLevels));
+                            var properties = this.GetClassPropertiesAsYuml(typeParameters[0], detailLevels);
+
+                            if (!string.IsNullOrEmpty(properties))
+                            {
+                                sb.AppendFormat("|{0}", properties);
+                            }
                         }
 
                         if (detailLevels.Contains(DetailLevel.PrivateMethods | DetailLevel.PublicMethods))
                         {
                             // Get class details (methods)
-                            sb.AppendFormat("|{0}", this.GetClassMethodsAsYuml(type, detailLevels));
+                            var methods = this.GetClassMethodsAsYuml(typeParameters[0], detailLevels);
+
+                            if (!string.IsNullOrEmpty(methods))
+                            {
+                                sb.AppendFormat("|{0}", methods);
+                            }
                         }
 
                         sb.Append("]");
@@ -314,13 +355,18 @@
                 // Private properties
                 if (detailLevels.Contains(DetailLevel.PrivateProperties) && propertyInfo.GetSetMethod() == null)
                 {
-                    sb.AppendFormat("- {0} : {1};", propertyInfo.Name, this.YumlEncode(propertyInfo.PropertyType.ToString()));
+                    sb.AppendFormat("- {0} : {1}", propertyInfo.Name, propertyInfo.PropertyType.GetYumlName());
                 }
 
                 // Public properties
                 if (detailLevels.Contains(DetailLevel.PublicProperties) && propertyInfo.GetSetMethod() != null)
                 {
-                    sb.AppendFormat("+ {0} : {1};", propertyInfo.Name, this.YumlEncode(propertyInfo.PropertyType.ToString()));
+                    sb.AppendFormat("+ {0} : {1}", propertyInfo.Name, propertyInfo.PropertyType.GetYumlName());
+                }
+
+                if (propertyInfo != properties.Last())
+                {
+                    sb.Append(";");
                 }
             }
 
@@ -344,40 +390,22 @@
                 // Private methods
                 if (detailLevels.Contains(DetailLevel.PrivateMethods) && methodInfo.IsPrivate)
                 {
-                    sb.AppendFormat("- {0}();", methodInfo.Name);
+                    sb.AppendFormat("- {0}()", methodInfo.Name);
                 }
 
                 // Public methods
                 if (detailLevels.Contains(DetailLevel.PublicMethods) && methodInfo.IsPublic)
                 {
-                    sb.AppendFormat("+ {0}();", methodInfo.Name);
+                    sb.AppendFormat("+ {0}()", methodInfo.Name);
+                }
+
+                if (methodInfo != methods.Last())
+                {
+                    sb.Append(";");
                 }
             }
 
             return sb.ToString();
-        }
-
-        /// <summary>
-        /// Encodes the string to yUML format
-        /// </summary>
-        /// <param name="str">The string.</param>
-        /// <returns>A yUML encoded string.</returns>
-        private string YumlEncode(string str)
-        {
-            var rstr = str;
-
-            if (rstr.StartsWith("System."))
-            {
-                rstr = rstr.Substring(7);
-            }
-
-            rstr = rstr
-                .Replace("`1", string.Empty)
-                .Replace('[', '［')
-                .Replace(']', '］')
-                .Replace('#', '＃');
-
-            return rstr;
         }
     }
 }
