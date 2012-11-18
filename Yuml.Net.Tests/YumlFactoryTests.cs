@@ -121,7 +121,7 @@
                                 typeof(Domain)
                             };
 
-            Assert.AreEqual("http://yuml.me/diagram/plain;dir:LR;scale:100;/class/[Administrator|+ Domain : Domain;+ Roles : IList<Role>|+ ChangePassword()],[Administrator]->[Domain|+ Name : string;+ Uri : string],[Administrator]1-0..*[Role|+ Name : string],[Role|+ Name : string],[Domain|+ Name : string;+ Uri : string]", new YumlFactory(types).GenerateClassDiagram(DetailLevel.PublicProperties, DetailLevel.PublicMethods));
+            Assert.AreEqual("http://yuml.me/diagram/plain;dir:LR;scale:100;/class/[<<IAdministrator>>;Administrator|+ Domain : Domain;+ Roles : IList<Role>|+ ChangePassword()],[<<IAdministrator>>;Administrator]^-[User|+ Password : string;+ Username : string],[User]^-[Person|+ Name : string],[<<IAdministrator>>;Administrator]->[Domain|+ Name : string;+ Uri : string],[<<IAdministrator>>;Administrator]1-0..*[Role|+ Name : string],[User|+ Password : string;+ Username : string],[Person|+ Name : string],[Role|+ Name : string],[Domain|+ Name : string;+ Uri : string]", new YumlFactory(types).GenerateClassDiagram(DetailLevel.PrivateProperties, DetailLevel.PublicProperties, DetailLevel.PrivateMethods, DetailLevel.PublicMethods));
         }
     }
 }
