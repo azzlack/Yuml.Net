@@ -12,7 +12,7 @@
     public class YumlFactoryTests
     {
         [Test]
-        public void Can_Generate_Single_Class_Diagram()
+        public void GenerateClassDiagram_WheGivenSingleClass_ShouldReturnDiagramUrl()
         {
             var types = new List<Type>
                             {
@@ -23,7 +23,7 @@
         }
 
         [Test]
-        public void Can_Generate_Inherited_Class_Diagram()
+        public void GenerateClassDiagram_WheGivenInheritedClassWithBase_ShouldReturnDiagramUrlWithBase()
         {
             var types = new List<Type>
                             {
@@ -35,7 +35,7 @@
         }
 
         [Test]
-        public void Will_Not_Generate_Inherited_Class_Diagram_If_Not_In_List()
+        public void GenerateClassDiagram_WhenGivenInheritedClassWithoutBase_ShouldReturnDiagramUrlWithoutBase()
         {
             var types = new List<Type>
                             {
@@ -46,7 +46,7 @@
         }
 
         [Test]
-        public void Can_Generate_Inherited_Class_Diagram_To_Several_Layers()
+        public void GenerateClassDiagram_WhenGivenMultipleInheritedClasses_ShouldReturnDiagramUrlWithAllInheritances()
         {
             var types = new List<Type>
                             {
@@ -59,7 +59,7 @@
         }
 
         [Test]
-        public void Can_Generate_Class_With_Interfaces()
+        public void GenerateClassDiagram_WhenGivenClassWithInterface_ShouldReturnDiagramUrl()
         {
             var types = new List<Type>
                             {
@@ -71,7 +71,7 @@
         }
 
         [Test]
-        public void Can_Generate_Class_With_Association()
+        public void GenerateClassDiagram_WhenGivenClassWithClassProperty_ShouldReturnDiagramUrlWithAssociation()
         {
             var types = new List<Type>
                             {
@@ -83,7 +83,7 @@
         }
 
         [Test]
-        public void Can_Generate_Class_With_A_Many_Association()
+        public void GenerateClassDiagram_WhenGivednClassWithListOfClassProperty_ShouldReturnDiagramUrlWithManyAssociation()
         {
             var types = new List<Type>
                             {
@@ -96,7 +96,7 @@
         }
 
         [Test]
-        public void Can_Generate_Detailed_Class_With_A_Many_Association()
+        public void GenerateClassDiagram_WhenGivenDetailedClassesWithListOfClassProperty_ShouldReturnDetailedDiagramUrlWithManyAssociation()
         {
             var types = new List<Type>
                             {
@@ -109,7 +109,7 @@
         }
 
         [Test]
-        public void Can_Generate_Really_Detailed_Class_With_A_Many_Association()
+        public void GenerateClassDiagram_WhenGivenManyDetailedClassesWithListOfClassProperty_ShouldReturnDetailedDiagramUrlWithManyAssociation()
         {
             var types = new List<Type>
                             {
