@@ -29,12 +29,6 @@
         private readonly string settingsFragment = string.Empty;
 
         /// <summary>
-        /// Gets or sets a value indicating whether [first pass].
-        /// </summary>
-        /// <value><c>true</c> if [first pass]; otherwise, <c>false</c>.</value>
-        private bool isFirstPass;
-
-        /// <summary>
         /// The relationships
         /// </summary>
         private readonly IList<Relationship> relationships = new List<Relationship>();
@@ -172,11 +166,13 @@
         {
             var sb = new StringBuilder();
 
+            var firstPass = true;
+
             foreach (var type in this.Types)
             {
                 if (this.Types.Contains(type) && type.IsClass)
                 {
-                    if (this.isFirstPass)
+                    if (!firstPass)
                     {
                         sb.Append(",");
                     }
@@ -213,11 +209,11 @@
 
                     // Get associated classes
                     sb.Append(this.GetAssociatedClassesAsYuml(type, detailLevels));
-                }
 
-                if (!this.isFirstPass)
-                {
-                    this.isFirstPass = true;
+                    if (firstPass)
+                    {
+                        firstPass = false;
+                    }
                 }
             }
 
