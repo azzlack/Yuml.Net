@@ -5,6 +5,8 @@
 
     using NUnit.Framework;
 
+    using Newtonsoft.Json;
+
     using global::Yuml.Net.Test.Interfaces;
     using global::Yuml.Net.Test.Models;
 
@@ -19,7 +21,7 @@
                                 typeof(Person)
                             };
 
-            Assert.AreEqual("http://yuml.me/diagram/plain;dir:LR;scale:100;/class/[Person]", new YumlFactory(types).GenerateClassDiagram());
+            Assert.AreEqual("http://yuml.me/diagram/plain;dir:LR;scale:100;/class/[Person]", new YumlFactory(types).GenerateClassDiagramUri());
         }
 
         [Test]
@@ -31,7 +33,7 @@
                                 typeof(Person)
                             };
 
-            Assert.AreEqual("http://yuml.me/diagram/plain;dir:LR;scale:100;/class/[User],[User]^-[Person],[Person]", new YumlFactory(types).GenerateClassDiagram());
+            Assert.AreEqual("http://yuml.me/diagram/plain;dir:LR;scale:100;/class/[User],[User]^-[Person],[Person]", new YumlFactory(types).GenerateClassDiagramUri());
         }
 
         [Test]
@@ -42,7 +44,7 @@
                                 typeof(User)
                             };
 
-            Assert.AreEqual("http://yuml.me/diagram/plain;dir:LR;scale:100;/class/[User]", new YumlFactory(types).GenerateClassDiagram());
+            Assert.AreEqual("http://yuml.me/diagram/plain;dir:LR;scale:100;/class/[User]", new YumlFactory(types).GenerateClassDiagramUri());
         }
 
         [Test]
@@ -55,7 +57,7 @@
                                 typeof(Person)
                             };
 
-            Assert.AreEqual("http://yuml.me/diagram/plain;dir:LR;scale:100;/class/[Administrator],[Administrator]^-[User],[User]^-[Person],[User],[Person]", new YumlFactory(types).GenerateClassDiagram());
+            Assert.AreEqual("http://yuml.me/diagram/plain;dir:LR;scale:100;/class/[Administrator],[Administrator]^-[User],[User]^-[Person],[User],[Person]", new YumlFactory(types).GenerateClassDiagramUri());
         }
 
         [Test]
@@ -67,7 +69,7 @@
                                 typeof(IAdministrator)
                             };
 
-            Assert.AreEqual("http://yuml.me/diagram/plain;dir:LR;scale:100;/class/[<<IAdministrator>>;Administrator]", new YumlFactory(types).GenerateClassDiagram());
+            Assert.AreEqual("http://yuml.me/diagram/plain;dir:LR;scale:100;/class/[<<IAdministrator>>;Administrator]", new YumlFactory(types).GenerateClassDiagramUri());
         }
 
         [Test]
@@ -79,7 +81,7 @@
                                 typeof(Domain)
                             };
 
-            Assert.AreEqual("http://yuml.me/diagram/plain;dir:LR;scale:100;/class/[Administrator],[Administrator]->[Domain],[Domain]", new YumlFactory(types).GenerateClassDiagram());
+            Assert.AreEqual("http://yuml.me/diagram/plain;dir:LR;scale:100;/class/[Administrator],[Administrator]->[Domain],[Domain]", new YumlFactory(types).GenerateClassDiagramUri());
         }
 
         [Test]
@@ -92,7 +94,7 @@
                                 typeof(Domain)
                             };
 
-            Assert.AreEqual("http://yuml.me/diagram/plain;dir:LR;scale:100;/class/[Administrator],[Administrator]->[Domain],[Administrator]1-0..*[Role],[Role],[Domain]", new YumlFactory(types).GenerateClassDiagram());
+            Assert.AreEqual("http://yuml.me/diagram/plain;dir:LR;scale:100;/class/[Administrator],[Administrator]->[Domain],[Administrator]1-0..*[Role],[Role],[Domain]", new YumlFactory(types).GenerateClassDiagramUri());
         }
 
         [Test]
@@ -105,7 +107,7 @@
                                 typeof(Domain)
                             };
 
-            Assert.AreEqual("http://yuml.me/diagram/plain;dir:LR;scale:100;/class/[Administrator|+ Domain : Domain;+ Roles : IList<Role>|+ ChangePassword()],[Administrator]->[Domain|+ Name : string;+ Uri : string],[Administrator]1-0..*[Role|+ Name : string],[Role|+ Name : string],[Domain|+ Name : string;+ Uri : string]", new YumlFactory(types).GenerateClassDiagram(DetailLevel.PublicProperties, DetailLevel.PublicMethods));
+            Assert.AreEqual("http://yuml.me/diagram/plain;dir:LR;scale:100;/class/[Administrator|+ Domain : Domain;+ Roles : IList<Role>|+ ChangePassword()],[Administrator]->[Domain|+ Name : string;+ Uri : string],[Administrator]1-0..*[Role|+ Name : string],[Role|+ Name : string],[Domain|+ Name : string;+ Uri : string]", new YumlFactory(types).GenerateClassDiagramUri(DetailLevel.PublicProperties, DetailLevel.PublicMethods));
         }
 
         [Test]
@@ -121,7 +123,21 @@
                                 typeof(Domain)
                             };
 
-            Assert.AreEqual("http://yuml.me/diagram/plain;dir:LR;scale:100;/class/[<<IAdministrator>>;Administrator|+ Domain : Domain;+ Roles : IList<Role>|+ ChangePassword()],[<<IAdministrator>>;Administrator]^-[User|+ Password : string;+ Username : string],[User]^-[Person|+ Name : string],[<<IAdministrator>>;Administrator]->[Domain|+ Name : string;+ Uri : string],[<<IAdministrator>>;Administrator]1-0..*[Role|+ Name : string],[User|+ Password : string;+ Username : string],[Person|+ Name : string],[Role|+ Name : string],[Domain|+ Name : string;+ Uri : string]", new YumlFactory(types).GenerateClassDiagram(DetailLevel.PrivateProperties, DetailLevel.PublicProperties, DetailLevel.PrivateMethods, DetailLevel.PublicMethods));
+            Assert.AreEqual("http://yuml.me/diagram/plain;dir:LR;scale:100;/class/[<<IAdministrator>>;Administrator|+ Domain : Domain;+ Roles : IList<Role>|+ ChangePassword()],[<<IAdministrator>>;Administrator]^-[User|+ Password : string;+ Username : string],[User]^-[Person|+ Name : string],[<<IAdministrator>>;Administrator]->[Domain|+ Name : string;+ Uri : string],[<<IAdministrator>>;Administrator]1-0..*[Role|+ Name : string],[User|+ Password : string;+ Username : string],[Person|+ Name : string],[Role|+ Name : string],[Domain|+ Name : string;+ Uri : string]", new YumlFactory(types).GenerateClassDiagramUri(DetailLevel.PrivateProperties, DetailLevel.PublicProperties, DetailLevel.PrivateMethods, DetailLevel.PublicMethods));
+        }
+
+        [Test]
+        public void GenerateClassDiagram_WhenGivenVeryManyDetailedClassesWithListOfClassProperty_ShouldReturnDetailedDiagramUrlWithManyAssociation()
+        {
+            var types = new List<Type>
+                            {
+                                typeof(JsonReader),
+                                typeof(JsonTextReader),
+                                typeof(JsonWriter),
+                                typeof(JsonTextWriter)
+                            };
+
+            Assert.AreEqual("http://yuml.me/510310ba", new YumlFactory(types).GenerateClassDiagramUri(DetailLevel.PrivateProperties, DetailLevel.PublicProperties, DetailLevel.PrivateMethods, DetailLevel.PublicMethods));
         }
     }
 }

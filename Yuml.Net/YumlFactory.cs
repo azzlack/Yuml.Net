@@ -4,8 +4,10 @@
     using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Net.Http;
     using System.Reflection;
     using System.Text;
+    using System.Threading.Tasks;
 
     using global::Yuml.Net.Extensions;
     using global::Yuml.Net.Interfaces;
@@ -19,7 +21,12 @@
         /// <summary>
         /// The base yUML URI
         /// </summary>
-        private string baseUri = "http://yuml.me/diagram";
+        private const string BaseUri = "http://yuml.me/diagram/";
+
+        /// <summary>
+        /// The yUML settings fragment
+        /// </summary>
+        private readonly string settingsFragment = string.Empty;
 
         /// <summary>
         /// Gets or sets a value indicating whether [first pass].
@@ -93,7 +100,7 @@
                     break;
             }
 
-            this.baseUri += "/" + options;
+            this.settingsFragment = options;
         }
 
         /// <summary>
@@ -118,11 +125,52 @@
         /// </summary>
         /// <param name="detailLevels">The detail levels.</param>
         /// <returns>The url to the class diagram.</returns>
-        public string GenerateClassDiagram(params DetailLevel[] detailLevels)
+        public string GenerateClassDiagramUri(params DetailLevel[] detailLevels)
         {
-            this.baseUri += "/class/";
+            return this.GenerateClassDiagramUriAsync(detailLevels).Result;
+        }
 
-            var sb = new StringBuilder(baseUri);
+        /// <summary>
+        /// Generates a class diagram.
+        /// </summary>
+        /// <param name="detailLevels">The detail levels.</param>
+        /// <returns>The url to the class diagram.</returns>
+        public async Task<string> GenerateClassDiagramUriAsync(params DetailLevel[] detailLevels)
+        {
+            // Get the diagram url fragment
+            var serializedDiagramFragment = this.GenerateSerializedClassDiagramFragment(detailLevels);
+
+            var diagramUri = BaseUri + this.settingsFragment + "/class/" + serializedDiagramFragment;
+
+            // Use GET if url is short enough
+            if (diagramUri.Length < 2000)
+            {
+                return diagramUri;
+            }
+
+            // Use POST for diagram url generation
+            var yumlClient = new HttpClient() { BaseAddress = new Uri(BaseUri) };
+
+            var data = new Dictionary<string, string>()
+                           {
+                               { "dsl_text", serializedDiagramFragment }
+                           };
+
+            var task = await yumlClient.PostAsync(this.settingsFragment + "/class/", new FormUrlEncodedContent(data));
+
+            var result = await task.Content.ReadAsStringAsync();
+
+            return "http://yuml.me/" + result.Substring(0, result.IndexOf(".", StringComparison.Ordinal));
+        }
+
+        /// <summary>
+        /// Generates the class diagram URL fragment.
+        /// </summary>
+        /// <param name="detailLevels">The detail levels.</param>
+        /// <returns>System.String.</returns>
+        private string GenerateSerializedClassDiagramFragment(params DetailLevel[] detailLevels)
+        {
+            var sb = new StringBuilder();
 
             foreach (var type in this.Types)
             {
@@ -140,8 +188,8 @@
                     {
                         // Get class details (properties)
                         var properties = this.GetClassPropertiesAsYuml(type, detailLevels);
-                        
-                        if (!string.IsNullOrEmpty(properties)) 
+
+                        if (!string.IsNullOrEmpty(properties))
                         {
                             sb.AppendFormat("|{0}", properties);
                         }
@@ -151,8 +199,8 @@
                     {
                         // Get class details (methods)
                         var methods = this.GetClassMethodsAsYuml(type, detailLevels);
-                        
-                        if (!string.IsNullOrEmpty(methods)) 
+
+                        if (!string.IsNullOrEmpty(methods))
                         {
                             sb.AppendFormat("|{0}", methods);
                         }
@@ -167,8 +215,8 @@
                     sb.Append(this.GetAssociatedClassesAsYuml(type, detailLevels));
                 }
 
-                if (!this.isFirstPass) 
-                { 
+                if (!this.isFirstPass)
+                {
                     this.isFirstPass = true;
                 }
             }

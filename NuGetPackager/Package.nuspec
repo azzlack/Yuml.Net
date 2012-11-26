@@ -5,7 +5,7 @@
     <version>1.0.0</version>
     <authors>Ove Andersen</authors>
     <owners>EyeCatch</owners>
-    <projectUrl>http://www.eyecatch.no/projects/autoloadservicehostfactory/</projectUrl>
+    <projectUrl>http://www.eyecatch.no/projects/yumlnet/</projectUrl>
     <iconUrl>http://www.eyecatch.no/favicon.ico</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>
@@ -15,6 +15,11 @@
     </releaseNotes>
     <copyright>Copyright EyeCatch 2012</copyright>
     <tags>uml</tags>
+    <dependencies>
+      <group targetFramework="net45">
+        <dependency id="Microsoft.Net.Http" version="2.0.20710.0" />
+      </group>
+    </dependencies>
   </metadata>
   <files>
     <file src="lib\**" target="lib" />
