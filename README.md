@@ -22,4 +22,4 @@ Then get the uri to the model diagram by calling the `GenerateClassDiagramUri` m
 
     var imageUri = factory.GenerateClassDiagramUri();
     
-NOTE: The uri's are cached for 30 000 seconds enhance performance.
+NOTE: The uri's are cached for 30 000 seconds to enhance performance.
