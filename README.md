@@ -8,7 +8,7 @@ Based on [Chris Owen's yuml-dotnet](https://github.com/chrisjowen/yuml-dotnet)
 # How to use
 Use the included `YumlFactory` or create your own implementation by inheriting the `IYumlFactory` interface.
 
-#### Using `YumlFactory` 
+#### Generating a class diagram with `YumlFactory` 
 Pass your model classes into the constructor.
 
     var types = new List<Type>
