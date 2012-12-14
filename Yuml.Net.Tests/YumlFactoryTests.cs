@@ -2,17 +2,31 @@
 {
     using System;
     using System.Collections.Generic;
-
-    using NUnit.Framework;
+    using System.Net.Http;
+    using System.Net.Mime;
 
     using Newtonsoft.Json;
 
+    using NUnit.Framework;
+
     using global::Yuml.Net.Test.Interfaces;
+
     using global::Yuml.Net.Test.Models;
 
     [TestFixture]
     public class YumlFactoryTests
     {
+        private HttpClient client;
+
+        [SetUp]
+        public void SetUp()
+        {
+            this.client = new HttpClient()
+                              {
+                                  BaseAddress = new Uri("http://yuml.me")
+                              };
+        }
+
         [Test]
         public void GenerateClassDiagram_WheGivenSingleClass_ShouldReturnDiagramUrl()
         {
@@ -21,7 +35,14 @@
                                 typeof(Person)
                             };
 
-            Assert.AreEqual("http://yuml.me/diagram/plain;dir:LR;scale:100;/class/[Person]", new YumlFactory(types).GenerateClassDiagramUri());
+            // Get image uri
+            var imageUri = new YumlFactory(types).GenerateClassDiagramUri();
+
+            // Verify that the uri is actually an image
+            var result = this.client.GetAsync(imageUri).Result;
+            
+            Assert.IsTrue(result.IsSuccessStatusCode);
+            Assert.That(result.Content.Headers.ContentType.MediaType == "image/png");
         }
 
         [Test]
@@ -33,7 +54,14 @@
                                 typeof(Person)
                             };
 
-            Assert.AreEqual("http://yuml.me/diagram/plain;dir:LR;scale:100;/class/[User],[User]^-[Person],[Person]", new YumlFactory(types).GenerateClassDiagramUri());
+            // Get image uri
+            var imageUri = new YumlFactory(types).GenerateClassDiagramUri();
+
+            // Verify that the uri is actually an image
+            var result = this.client.GetAsync(imageUri).Result;
+
+            Assert.IsTrue(result.IsSuccessStatusCode);
+            Assert.That(result.Content.Headers.ContentType.MediaType == "image/png");
         }
 
         [Test]
@@ -44,7 +72,14 @@
                                 typeof(User)
                             };
 
-            Assert.AreEqual("http://yuml.me/diagram/plain;dir:LR;scale:100;/class/[User]", new YumlFactory(types).GenerateClassDiagramUri());
+            // Get image uri
+            var imageUri = new YumlFactory(types).GenerateClassDiagramUri();
+
+            // Verify that the uri is actually an image
+            var result = this.client.GetAsync(imageUri).Result;
+
+            Assert.IsTrue(result.IsSuccessStatusCode);
+            Assert.That(result.Content.Headers.ContentType.MediaType == "image/png");
         }
 
         [Test]
@@ -57,7 +92,14 @@
                                 typeof(Person)
                             };
 
-            Assert.AreEqual("http://yuml.me/diagram/plain;dir:LR;scale:100;/class/[Administrator],[Administrator]^-[User],[User]^-[Person],[User],[Person]", new YumlFactory(types).GenerateClassDiagramUri());
+            // Get image uri
+            var imageUri = new YumlFactory(types).GenerateClassDiagramUri();
+
+            // Verify that the uri is actually an image
+            var result = this.client.GetAsync(imageUri).Result;
+
+            Assert.IsTrue(result.IsSuccessStatusCode);
+            Assert.That(result.Content.Headers.ContentType.MediaType == "image/png");
         }
 
         [Test]
@@ -69,7 +111,14 @@
                                 typeof(IAdministrator)
                             };
 
-            Assert.AreEqual("http://yuml.me/diagram/plain;dir:LR;scale:100;/class/[<<IAdministrator>>;Administrator]", new YumlFactory(types).GenerateClassDiagramUri());
+            // Get image uri
+            var imageUri = new YumlFactory(types).GenerateClassDiagramUri();
+
+            // Verify that the uri is actually an image
+            var result = this.client.GetAsync(imageUri).Result;
+
+            Assert.IsTrue(result.IsSuccessStatusCode);
+            Assert.That(result.Content.Headers.ContentType.MediaType == "image/png");
         }
 
         [Test]
@@ -81,7 +130,14 @@
                                 typeof(Domain)
                             };
 
-            Assert.AreEqual("http://yuml.me/diagram/plain;dir:LR;scale:100;/class/[Administrator],[Administrator]->[Domain],[Domain]", new YumlFactory(types).GenerateClassDiagramUri());
+            // Get image uri
+            var imageUri = new YumlFactory(types).GenerateClassDiagramUri();
+
+            // Verify that the uri is actually an image
+            var result = this.client.GetAsync(imageUri).Result;
+
+            Assert.IsTrue(result.IsSuccessStatusCode);
+            Assert.That(result.Content.Headers.ContentType.MediaType == "image/png");
         }
 
         [Test]
@@ -94,7 +150,14 @@
                                 typeof(Domain)
                             };
 
-            Assert.AreEqual("http://yuml.me/diagram/plain;dir:LR;scale:100;/class/[Administrator],[Administrator]->[Domain],[Administrator]1-0..*[Role],[Role],[Domain]", new YumlFactory(types).GenerateClassDiagramUri());
+            // Get image uri
+            var imageUri = new YumlFactory(types).GenerateClassDiagramUri();
+
+            // Verify that the uri is actually an image
+            var result = this.client.GetAsync(imageUri).Result;
+
+            Assert.IsTrue(result.IsSuccessStatusCode);
+            Assert.That(result.Content.Headers.ContentType.MediaType == "image/png");
         }
 
         [Test]
@@ -107,7 +170,14 @@
                                 typeof(Domain)
                             };
 
-            Assert.AreEqual("http://yuml.me/diagram/plain;dir:LR;scale:100;/class/[Administrator|+ Domain : Domain;+ Roles : IList<Role>|+ ChangePassword()],[Administrator]->[Domain|+ Name : string;+ Uri : string],[Administrator]1-0..*[Role|+ Name : string],[Role|+ Name : string],[Domain|+ Name : string;+ Uri : string]", new YumlFactory(types).GenerateClassDiagramUri(DetailLevel.PublicProperties, DetailLevel.PublicMethods));
+            // Get image uri
+            var imageUri = new YumlFactory(types).GenerateClassDiagramUri();
+
+            // Verify that the uri is actually an image
+            var result = this.client.GetAsync(imageUri).Result;
+
+            Assert.IsTrue(result.IsSuccessStatusCode);
+            Assert.That(result.Content.Headers.ContentType.MediaType == "image/png");
         }
 
         [Test]
@@ -123,11 +193,17 @@
                                 typeof(Domain)
                             };
 
-            Assert.AreEqual("http://yuml.me/diagram/plain;dir:LR;scale:100;/class/[<<IAdministrator>>;Administrator|+ Domain : Domain;+ Roles : IList<Role>|+ ChangePassword()],[<<IAdministrator>>;Administrator]^-[User|+ Password : string;+ Username : string],[User]^-[Person|+ Name : string],[<<IAdministrator>>;Administrator]->[Domain|+ Name : string;+ Uri : string],[<<IAdministrator>>;Administrator]1-0..*[Role|+ Name : string],[User|+ Password : string;+ Username : string],[Person|+ Name : string],[Role|+ Name : string],[Domain|+ Name : string;+ Uri : string]", new YumlFactory(types).GenerateClassDiagramUri(DetailLevel.PrivateProperties, DetailLevel.PublicProperties, DetailLevel.PrivateMethods, DetailLevel.PublicMethods));
+            // Get image uri
+            var imageUri = new YumlFactory(types).GenerateClassDiagramUri();
+
+            // Verify that the uri is actually an image
+            var result = this.client.GetAsync(imageUri).Result;
+
+            Assert.IsTrue(result.IsSuccessStatusCode);
+            Assert.That(result.Content.Headers.ContentType.MediaType == "image/png");
         }
 
         [Test]
-        [Ignore]
         public void GenerateClassDiagram_WhenGivenVeryManyDetailedClassesWithListOfClassProperty_ShouldReturnDetailedDiagramUrlWithManyAssociation()
         {
             var types = new List<Type>
@@ -138,7 +214,14 @@
                                 typeof(JsonTextWriter)
                             };
 
-            Assert.AreEqual("http://yuml.me/510310ba", new YumlFactory(types).GenerateClassDiagramUri(DetailLevel.PrivateProperties, DetailLevel.PublicProperties, DetailLevel.PrivateMethods, DetailLevel.PublicMethods));
+            // Get image uri
+            var imageUri = new YumlFactory(types).GenerateClassDiagramUri();
+
+            // Verify that the uri is actually an image
+            var result = this.client.GetAsync(imageUri).Result;
+
+            Assert.IsTrue(result.IsSuccessStatusCode);
+            Assert.That(result.Content.Headers.ContentType.MediaType == "image/png");
         }
     }
 }

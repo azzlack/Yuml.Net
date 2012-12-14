@@ -6,6 +6,7 @@
     using System.Linq;
     using System.Net.Http;
     using System.Reflection;
+    using System.Runtime.Caching;
     using System.Text;
 
     using global::Yuml.Net.Extensions;
@@ -33,10 +34,9 @@
         private readonly IList<Relationship> relationships = new List<Relationship>();
 
         /// <summary>
-        /// Gets or sets the types to generate diagrams for.
+        /// The URI cache
         /// </summary>
-        /// <value>The types to generate diagrams for.</value>
-        public IList<Type> Types { get; set; }
+        private readonly ObjectCache uriCache = MemoryCache.Default;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="YumlFactory" /> class.
@@ -114,6 +114,12 @@
         }
 
         /// <summary>
+        /// Gets or sets the types to generate diagrams for.
+        /// </summary>
+        /// <value>The types to generate diagrams for.</value>
+        public IList<Type> Types { get; set; }
+
+        /// <summary>
         /// Generates a class diagram.
         /// </summary>
         /// <param name="detailLevels">The detail levels.</param>
@@ -122,6 +128,12 @@
         {
             // Get the diagram url fragment
             var serializedDiagramFragment = this.GenerateSerializedClassDiagramFragment(detailLevels);
+
+            // Check if fragment is cached
+            if (this.uriCache.Get(serializedDiagramFragment) != null)
+            {
+                return this.uriCache.Get(serializedDiagramFragment) as string;
+            }
 
             // Use POST for diagram url generation
             var yumlClient = new HttpClient() { BaseAddress = new Uri(BaseUri) };
@@ -135,7 +147,12 @@
 
             var result = response.Content.ReadAsStringAsync().Result;
 
-            return "http://yuml.me/" + result.Substring(0, result.IndexOf(".", StringComparison.Ordinal));
+            var uri = "http://yuml.me/" + result.Substring(0, result.IndexOf(".", StringComparison.Ordinal));
+
+            // Add uri to cache
+            this.uriCache.Add(serializedDiagramFragment, uri, DateTime.Now.AddSeconds(30000));
+
+            return uri;
         }
 
         /// <summary>
