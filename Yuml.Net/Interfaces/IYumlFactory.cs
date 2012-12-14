@@ -2,7 +2,6 @@ namespace Yuml.Net.Interfaces
 {
     using System;
     using System.Collections.Generic;
-    using System.Threading.Tasks;
 
     /// <summary>
     /// Interface for the yUML factory
@@ -21,12 +20,5 @@ namespace Yuml.Net.Interfaces
         /// <param name="detailLevels">The detail levels.</param>
         /// <returns>The url to the class diagram.</returns>
         string GenerateClassDiagramUri(params DetailLevel[] detailLevels);
-
-        /// <summary>
-        /// Generates a class diagram uri asynchronously.
-        /// </summary>
-        /// <param name="detailLevels">The detail levels.</param>
-        /// <returns>The url to the class diagram.</returns>
-        Task<string> GenerateClassDiagramUriAsync(params DetailLevel[] detailLevels);
     }
 }

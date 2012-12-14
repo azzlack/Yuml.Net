@@ -7,7 +7,6 @@
     using System.Net.Http;
     using System.Reflection;
     using System.Text;
-    using System.Threading.Tasks;
 
     using global::Yuml.Net.Extensions;
     using global::Yuml.Net.Interfaces;
@@ -121,26 +120,8 @@
         /// <returns>The url to the class diagram.</returns>
         public string GenerateClassDiagramUri(params DetailLevel[] detailLevels)
         {
-            return this.GenerateClassDiagramUriAsync(detailLevels).Result;
-        }
-
-        /// <summary>
-        /// Generates a class diagram.
-        /// </summary>
-        /// <param name="detailLevels">The detail levels.</param>
-        /// <returns>The url to the class diagram.</returns>
-        public async Task<string> GenerateClassDiagramUriAsync(params DetailLevel[] detailLevels)
-        {
             // Get the diagram url fragment
             var serializedDiagramFragment = this.GenerateSerializedClassDiagramFragment(detailLevels);
-
-            var diagramUri = BaseUri + this.settingsFragment + "/class/" + serializedDiagramFragment;
-
-            // Use GET if url is short enough
-            if (diagramUri.Length < 2000)
-            {
-                return diagramUri;
-            }
 
             // Use POST for diagram url generation
             var yumlClient = new HttpClient() { BaseAddress = new Uri(BaseUri) };
@@ -150,9 +131,9 @@
                                { "dsl_text", serializedDiagramFragment }
                            };
 
-            var task = await yumlClient.PostAsync(this.settingsFragment + "/class/", new FormUrlEncodedContent(data));
+            var response = yumlClient.PostAsync(this.settingsFragment + "/class/", new FormUrlEncodedContent(data)).Result;
 
-            var result = await task.Content.ReadAsStringAsync();
+            var result = response.Content.ReadAsStringAsync().Result;
 
             return "http://yuml.me/" + result.Substring(0, result.IndexOf(".", StringComparison.Ordinal));
         }

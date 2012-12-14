@@ -127,6 +127,7 @@
         }
 
         [Test]
+        [Ignore]
         public void GenerateClassDiagram_WhenGivenVeryManyDetailedClassesWithListOfClassProperty_ShouldReturnDetailedDiagramUrlWithManyAssociation()
         {
             var types = new List<Type>
