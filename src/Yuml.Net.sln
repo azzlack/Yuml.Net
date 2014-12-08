@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 2013
+VisualStudioVersion = 12.0.31101.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yuml.Net", "Yuml.Net\Yuml.Net.csproj", "{9D2C2EF2-666B-43A2-AB4F-675ED5208E4D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yuml.Net.Tests", "Yuml.Net.Tests\Yuml.Net.Tests.csproj", "{E8C0F869-06F3-48A9-BA4F-D2636E09DD9F}"

@@ -3,11 +3,13 @@
     using System;
     using System.Collections;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Linq;
     using System.Net.Http;
     using System.Reflection;
     using System.Runtime.Caching;
     using System.Text;
+    using System.Threading.Tasks;
 
     using global::Yuml.Net.Extensions;
     using global::Yuml.Net.Interfaces;
@@ -44,7 +46,7 @@
         /// <param name="diagramType">Type of the diagram.</param>
         /// <param name="direction">The direction.</param>
         /// <param name="scale">The scale.</param>
-        public YumlFactory(DiagramType diagramType = DiagramType.Plain, Direction direction = Direction.LeftToRight, Scale scale = Scale.Normal)
+        private YumlFactory(DiagramType diagramType = DiagramType.Plain, Direction direction = Direction.LeftToRight, Scale scale = Scale.Normal)
         {
             var options = string.Empty;
 
@@ -97,6 +99,22 @@
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="YumlFactory"/> class.
+        /// </summary>
+        /// <param name="type">The type.</param>
+        /// <param name="diagramType">Type of the diagram.</param>
+        /// <param name="direction">The direction.</param>
+        /// <param name="scale">The scale.</param>
+        public YumlFactory(Type type,
+            DiagramType diagramType = DiagramType.Plain,
+            Direction direction = Direction.LeftToRight,
+            Scale scale = Scale.Normal)
+            : this(diagramType, direction, scale)
+        {
+            this.Types = new List<Type>() { type };
+        }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="YumlFactory" /> class.
         /// </summary>
         /// <param name="types">The types.</param>
@@ -124,10 +142,12 @@
         /// </summary>
         /// <param name="detailLevels">The detail levels.</param>
         /// <returns>The url to the class diagram.</returns>
-        public string GenerateClassDiagramUri(params DetailLevel[] detailLevels)
+        public async Task<string> GenerateClassDiagramUri(params DetailLevel[] detailLevels)
         {
             // Get the diagram url fragment
             var serializedDiagramFragment = this.GenerateSerializedClassDiagramFragment(detailLevels);
+
+            Trace.WriteLine(string.Format("Generated yUML string representation for '{0}': '{1}'", string.Join(", ", this.Types), serializedDiagramFragment));
 
             // Check if fragment is cached
             if (this.uriCache.Get(serializedDiagramFragment) != null)
@@ -143,9 +163,11 @@
                                { "dsl_text", serializedDiagramFragment }
                            };
 
-            var response = yumlClient.PostAsync(this.settingsFragment + "/class/", new FormUrlEncodedContent(data)).Result;
+            var response = await yumlClient.PostAsync(this.settingsFragment + "/class/", new FormUrlEncodedContent(data));
 
-            var result = response.Content.ReadAsStringAsync().Result;
+            var result = await response.Content.ReadAsStringAsync();
+
+            Trace.WriteLine(string.Format("Return yUML uri for '{0}': '{1}'", string.Join(", ", this.Types), result));
 
             var uri = "http://yuml.me/" + result.Substring(0, result.IndexOf(".", StringComparison.Ordinal));
 
@@ -153,6 +175,26 @@
             this.uriCache.Add(serializedDiagramFragment, uri, DateTime.Now.AddSeconds(30000));
 
             return uri;
+        }
+
+        /// <summary>
+        /// Creates a new yUML factory for the specified types.
+        /// </summary>
+        /// <param name="types">The types.</param>
+        /// <returns>A new yUML factory.</returns>
+        public static IYumlFactory Create(params Type[] types)
+        {
+            return new YumlFactory(types);
+        }
+
+        /// <summary>
+        /// Creates a new yUML factory for the specified type.
+        /// </summary>
+        /// <param name="type">The type.</param>
+        /// <returns>A new yUML factory.</returns>
+        public static IYumlFactory Create<T>()
+        {
+            return new YumlFactory(typeof(T));
         }
 
         /// <summary>

@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Yuml.Net</id>
-    <version>1.0.0</version>
+    <version>1.3.0</version>
     <authors>Ove Andersen</authors>
     <owners>EyeCatch</owners>
     <projectUrl>http://www.eyecatch.no/projects/yumlnet/</projectUrl>
@@ -12,18 +12,22 @@
       Library for generating UML diagrams from code using the yUML.me service.
     </description>
     <releaseNotes>
+      * Updated to use latest HTTP client library
+* Fixed bug where classes with generic properties would generate invalid uml string
+* Added static shorthand methods
     </releaseNotes>
-    <copyright>Copyright EyeCatch 2012</copyright>
+    <copyright>Copyright EyeCatch 2014</copyright>
     <tags>uml</tags>
     <dependencies>
       <group targetFramework="net45">
-        <dependency id="Microsoft.Net.Http" version="2.0.20710.0" />
+        <dependency id="Microsoft.AspNet.WebApi.Client" version="5.2.2" />
       </group>
     </dependencies>
   </metadata>
   <files>
     <file src="lib\**" target="lib" />
     <file src="tools\**" target="tools" />
-    <file src="content\**" target="content" />
+    <file src="content\**" target="content" />	
+    <file src="src\**" target="src" />
   </files>
 </package>

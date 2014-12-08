@@ -17,6 +17,10 @@
             rstr = rstr
                 .Replace("<<", "«")
                 .Replace(">>", "»")
+                .Replace("<", "＜")
+                .Replace(">", "＞")
+                .Replace("{", "｛")
+                .Replace("}", "｝")
                 .Replace('[', '［')
                 .Replace(']', '］')
                 .Replace('#', '＃');
